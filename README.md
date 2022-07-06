@@ -29,6 +29,18 @@
         ]
     }
 
+### **How to user?**
+
+After import from merkle-distributor-array, only one function to use:
+
+```javascript
+import { merkletree_generator } from 'merkle-distributor-array';
+
+const generator = merkletree_generator(originalpath: string, generatedpath: string);
+```
+
+*originalpath* is your target file path, *generatedPath* is which the generated merkle tree file to save on. The result will return a MerkleDistributorInfo obejct.
+
 
 
 ### **the result of the merkle tree generation is the same of uniswap:**
