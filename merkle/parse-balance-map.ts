@@ -10,7 +10,7 @@ const { isAddress, getAddress } = utils;
 // and the tree has no additional distributions.
 interface MerkleDistributorInfo {
   merkleRoot: string;
-  totalLands: string;
+  totalAmount: string;
   claims: {
     [account: string]: {
       index: number;
@@ -94,14 +94,14 @@ export function parseBalanceMap(
     return memo;
   }, {});
 
-  const totalLands: BigNumber = sortedAddresses.reduce<BigNumber>(
+  const totalAmount: BigNumber = sortedAddresses.reduce<BigNumber>(
     (memo, key) => memo.add(dataByAddress[key].Ids.length),
     BigNumber.from(0)
   );
 
   return {
     merkleRoot: tree.getHexRoot(),
-    totalLands: totalLands.toHexString(),
+    totalAmount: totalAmount.toHexString(),
     claims,
   };
 }

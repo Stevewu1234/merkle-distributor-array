@@ -2,9 +2,19 @@ import { Command, program } from 'commander'
 import fs from 'fs'
 import { parseBalanceMap } from '../merkle/parse-balance-map'
 
+interface MerkleDistributorInfo {
+  merkleRoot: string;
+  totalAmount: string;
+  claims: {
+    [account: string]: {
+      index: number;
+      Ids: string[];
+      proof: string[];
+    };
+  };
+}
 
-
-export const generateMerkleTree = (originalPath: string, generatedPath: string) => {
+export const generateMerkleTree = (originalPath: string, generatedPath: string): MerkleDistributorInfo => {
 
   //   program
   //   .version('0.0.0')
@@ -19,4 +29,5 @@ export const generateMerkleTree = (originalPath: string, generatedPath: string) 
 
   fs.writeFileSync(generatedPath, JSON.stringify(parseBalanceMap(json), null, 4));
 
+  return parseBalanceMap(json);
 }
