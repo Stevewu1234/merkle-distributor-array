@@ -1,4 +1,4 @@
-import { generateMerkleTree } from '../scripts/generate-merkle-root';
+import { generateMerkleTree } from './scripts/generate-merkle-root';
 
 interface MerkleDistributorInfo {
   merkleRoot: string;

@@ -21,11 +21,11 @@ interface MerkleDistributorInfo {
 }
 
 type OldFormat = { [account: string]: number | string };
-type Format = { [account: string]: string[] };
-type NewFormat = { address: string; locationIds: string[] };
+type ArrayFormat = { [account: string]: string[] };
+type NewFormat = { address: string; values: string[] };
 
 export function parseBalanceMap(
-  asset: Format | OldFormat
+  asset: ArrayFormat | OldFormat
 ): MerkleDistributorInfo {
   // recombine the data format
   // const NewFormatAsset = Array.isArray(asset)
@@ -38,9 +38,9 @@ export function parseBalanceMap(
   const assetInNewFormat: NewFormat[] = Object.keys(asset).map(
     (account, index): NewFormat => ({
       address: account,
-      locationIds: Array.isArray(asset)
-        ? Object.values(asset)[index]
-        : [Object.values(asset)[index].toString()],
+      values: !Array.isArray(asset[account])
+      ? [Object.values(asset)[index].toString()]
+      : Object.values(asset)[index],
     })
   );
 
@@ -48,21 +48,21 @@ export function parseBalanceMap(
     [address: string]: {
       Ids: BigNumber[];
     };
-  }>((memo, { address: account, locationIds }) => {
+  }>((memo, { address: account, values }) => {
     if (!isAddress(account)) {
       throw new Error(`Found invalid address: ${account}`);
     }
     const parsed = getAddress(account);
     if (memo[parsed]) throw new Error(`Duplicate address: ${parsed}`);
 
-    const parsedNumArray = locationIds.map((id) => BigNumber.from(id));
-    parsedNumArray.forEach((id) => {
-      if (id.lte(0)) {
-        throw new Error(`Invalid ids for account: ${account}`);
-      }
-    });
-
-    memo[parsed] = { Ids: parsedNumArray };
+    const parsedNumArray = values.map((id) => BigNumber.from(id));
+      parsedNumArray.forEach((id) => {
+        if (id.lte(0)) {
+          throw new Error(`Invalid ids for account: ${account}`);
+        }
+      });
+      memo[parsed] = { Ids: parsedNumArray };
+    
     return memo;
   }, {});
 
@@ -90,7 +90,7 @@ export function parseBalanceMap(
       Ids: ids.map((id) => BigNumber.from(id).toString()),
       proof: tree.getProof(index, address, ids),
     };
-
+    
     return memo;
   }, {});
 
