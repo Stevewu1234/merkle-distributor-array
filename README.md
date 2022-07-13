@@ -16,22 +16,40 @@
         "0xC7AA922f0823DeE2eD721E61ebCCF2F9596017Fb": 100
     }
 
-3. ["address"]: string[], like the following case:
+3. ["address"]: string["uint"], like the following case:
 
     ```javascript
     {
         "0x57E7c6B647C004CFB7A38E08fDDef09Af5Ea55eD": 
             [
-            "1",
-            "3463",
-            "34527",
-            "34252"
+                "1",
+                "3463",
+                "34527",
+                "34252"
             ],
-        "0x7C262baf13794f54e3514539c411f92716996C38": [
-            "1",
-            "2456",
-            "4"
+        "0x7C262baf13794f54e3514539c411f92716996C38": 
+            [
+                "1",
+                "2456",
+                "4"
             ],
+    }
+
+4. ["address"]: string["string"], like the following case:
+
+    ```javascript
+    {
+        "0xF3c6F5F265F503f53EAD8aae90FC257A5aa49AC1": 
+            [
+                "hello world",
+                "I'm find, thanks"
+            ],
+        "0xB9CcDD7Bedb7157798e10Ff06C7F10e0F37C6BdD": 
+            [
+                "how old are u",
+                "I'm 9999 years old",
+                "666"
+            ]
     }
 
 ### **How to user?**
