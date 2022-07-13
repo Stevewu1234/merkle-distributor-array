@@ -1,4 +1,5 @@
 /* eslint-disable node/no-missing-import */
+import { isBigNumberish } from "@ethersproject/bignumber/lib/bignumber";
 import { BigNumber, utils } from "ethers";
 import BalanceTree from "./balance-tree";
 
@@ -34,6 +35,7 @@ export function parseBalanceMap(
   //       (key, index) => (key = Object.values(asset)[index].toString())
   //     );
   // console.log(NewFormatAsset);
+  let bigNumberish: boolean = true;
 
   const assetInNewFormat: NewFormat[] = Object.keys(asset).map(
     (account, index): NewFormat => ({
@@ -46,7 +48,7 @@ export function parseBalanceMap(
 
   const dataByAddress = assetInNewFormat.reduce<{
     [address: string]: {
-      Ids: BigNumber[];
+      Ids: BigNumber[] | string[];
     };
   }>((memo, { address: account, values }) => {
     if (!isAddress(account)) {
@@ -55,13 +57,29 @@ export function parseBalanceMap(
     const parsed = getAddress(account);
     if (memo[parsed]) throw new Error(`Duplicate address: ${parsed}`);
 
-    const parsedNumArray = values.map((id) => BigNumber.from(id));
-      parsedNumArray.forEach((id) => {
+    let parsedArray: string[] | BigNumber[] = [];
+
+
+    for(let i in values) {
+      if(!isBigNumberish(values[i])) {
+        bigNumberish = false;
+        break;
+      }
+    }
+
+    if(bigNumberish) {
+      parsedArray = values.map((id) => BigNumber.from(id));
+
+      parsedArray.forEach((id) => {
         if (id.lte(0)) {
           throw new Error(`Invalid ids for account: ${account}`);
         }
       });
-      memo[parsed] = { Ids: parsedNumArray };
+    } else {
+      parsedArray = values;
+    }
+
+    memo[parsed] = { Ids: parsedArray };
     
     return memo;
   }, {});
@@ -73,9 +91,10 @@ export function parseBalanceMap(
     sortedAddresses.map((address) => ({
       account: address,
       ids: dataByAddress[address].Ids,
-    }))
+    })),
+    bigNumberish
   );
-
+  
   // generate claims
   const claims = sortedAddresses.reduce<{
     [address: string]: {
@@ -84,13 +103,14 @@ export function parseBalanceMap(
       proof: string[];
     };
   }>((memo, address, index) => {
+    // console.log(bigNumberish)
     const ids = dataByAddress[address].Ids;
     memo[address] = {
       index,
-      Ids: ids.map((id) => BigNumber.from(id).toString()),
-      proof: tree.getProof(index, address, ids),
+      Ids: bigNumberish? ids.map((id) => BigNumber.from(id).toString()): ids.map((id) => id.toString()),
+      proof: tree.getProof(index, address, ids, bigNumberish),
     };
-    
+
     return memo;
   }, {});
 
