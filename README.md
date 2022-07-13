@@ -1,4 +1,5 @@
 # @stevewu/merkle-distributor-array
+*you can find the npm on https://www.npmjs.com/package/merkle-distributor-array*
 
 ### **the new merkle tree distributor generator supports three format of original data**
 
