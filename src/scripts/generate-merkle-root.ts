@@ -1,8 +1,8 @@
-import { Command, program } from 'commander'
-import fs from 'fs'
-import { parseBalanceMap } from '../merkle/parse-balance-map'
+import { Command, program } from 'commander';
+import fs from 'fs';
+import { parseBalanceMap } from '../merkle/parse-balance-map';
 
-interface MerkleDistributorInfo {
+export interface MerkleDistributorInfo {
   merkleRoot: string;
   totalAmount: string;
   claims: {
@@ -15,7 +15,6 @@ interface MerkleDistributorInfo {
 }
 
 export const generateMerkleTree = (originalPath: string, generatedPath: string): MerkleDistributorInfo => {
-
   //   program
   //   .version('0.0.0')
   //   .requiredOption(
@@ -24,10 +23,10 @@ export const generateMerkleTree = (originalPath: string, generatedPath: string):
   //   )
 
   // program.parse(process.argv)
-  const json = JSON.parse(fs.readFileSync(originalPath, { encoding: 'utf8' }))
-  if (typeof json !== 'object') throw new Error('Invalid JSON')
+  const json = fs.existsSync(originalPath) ? JSON.parse(fs.readFileSync(originalPath, { encoding: 'utf8' })) : new Error('original data not exist');
+  if (typeof json !== 'object') throw new Error('Invalid JSON');
 
   fs.writeFileSync(generatedPath, JSON.stringify(parseBalanceMap(json), null, 4));
 
   return parseBalanceMap(json);
-}
+};
