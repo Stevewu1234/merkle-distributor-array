@@ -14,8 +14,8 @@ export interface MerkleDistributorInfo {
   };
 }
 
-export const generateMerkleTree = (originalFile: string, generatedPath: string): MerkleDistributorInfo => {
-  const json = fs.existsSync(originalFile) ? JSON.parse(fs.readFileSync(originalFile, { encoding: 'utf8' })) : new Error('original data not exist');
+export const generateMerkleTree = (originalFilePath: string, generatedPath: string): MerkleDistributorInfo => {
+  const json = fs.existsSync(originalFilePath) ? JSON.parse(fs.readFileSync(originalFilePath, { encoding: 'utf8' })) : new Error('original data not exist');
   if (typeof json !== 'object') throw new Error('Invalid JSON');
 
   const root = parseBalanceMap(json).merkleRoot;
