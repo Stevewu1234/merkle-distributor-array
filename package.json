@@ -1,6 +1,6 @@
 {
   "name": "merkle-distributor-array",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "add a new data format to generate merkle-tree based on uniswap merkle-distributor logic",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
