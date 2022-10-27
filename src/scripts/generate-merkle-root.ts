@@ -14,19 +14,13 @@ export interface MerkleDistributorInfo {
   };
 }
 
-export const generateMerkleTree = (originalPath: string, generatedPath: string): MerkleDistributorInfo => {
-  //   program
-  //   .version('0.0.0')
-  //   .requiredOption(
-  //     '-i, --input <path>',
-  //     'input JSON file location containing a map of account addresses to string balances'
-  //   )
-
-  // program.parse(process.argv)
-  const json = fs.existsSync(originalPath) ? JSON.parse(fs.readFileSync(originalPath, { encoding: 'utf8' })) : new Error('original data not exist');
+export const generateMerkleTree = (originalFile: string, generatedPath: string): MerkleDistributorInfo => {
+  const json = fs.existsSync(originalFile) ? JSON.parse(fs.readFileSync(originalFile, { encoding: 'utf8' })) : new Error('original data not exist');
   if (typeof json !== 'object') throw new Error('Invalid JSON');
 
-  fs.writeFileSync(generatedPath, JSON.stringify(parseBalanceMap(json), null, 4));
+  const root = parseBalanceMap(json).merkleRoot;
+
+  fs.writeFileSync(`${generatedPath}/${root}.json`, JSON.stringify(parseBalanceMap(json), null, 4));
 
   return parseBalanceMap(json);
 };
